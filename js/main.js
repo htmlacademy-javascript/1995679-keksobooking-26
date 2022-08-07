@@ -1,7 +1,4 @@
-import { generateItem } from './data.js';
+import { getCardData, renderOfferCard } from './get-offers.js';
 
-const AMOUNT_OF_TEMP_ITEMS = 10;
-
-for (let i = 1; i <= AMOUNT_OF_TEMP_ITEMS; i++) {
-  generateItem(i);
-}
+const cardData = getCardData();
+renderOfferCard(cardData);
