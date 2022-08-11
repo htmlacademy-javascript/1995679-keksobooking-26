@@ -45,7 +45,7 @@ const validateForm = () => {
     }
     priceElement.placeholder = priceElement.min;
     return true;
-  }, 'error', 2, false)
+  }, 'error', 2, false);
 
   adFormElement.addEventListener('submit', (evt) => {
     evt.preventDefault();
