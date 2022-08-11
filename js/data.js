@@ -18,7 +18,7 @@ const MIN_LONGITUDE = 139.70000;
 const MAX_LONGITUDE = 139.80000;
 const ACCOMMODATION_COORDINATES_PRECISION = 5;
 
-const generateItem = (id) => {
+const generateItem = (id = 1) => {
   const accommodationLatitude = getRandomPositiveFloat(MIN_LATITUDE, MAX_LATITUDE, ACCOMMODATION_COORDINATES_PRECISION);
   const accommodationLongitude = getRandomPositiveFloat(MIN_LONGITUDE, MAX_LONGITUDE, ACCOMMODATION_COORDINATES_PRECISION);
 

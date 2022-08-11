@@ -1,7 +1,9 @@
-import { generateItem } from './data.js';
+import { getCardData, renderOfferCard } from './get-offers.js';
+import { makePageInactive, makePageActive, validateForm } from './form.js';
 
-const AMOUNT_OF_TEMP_ITEMS = 10;
+const cardData = getCardData();
+renderOfferCard(cardData);
 
-for (let i = 1; i <= AMOUNT_OF_TEMP_ITEMS; i++) {
-  generateItem(i);
-}
+makePageInactive();
+makePageActive();
+validateForm();
