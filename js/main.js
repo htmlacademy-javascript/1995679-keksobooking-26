@@ -1,5 +1,5 @@
 import { getCardData, renderOfferCard } from './get-offers.js';
-import { makePageInactive, makePageActive, validateForm } from './form.js';
+import { makePageInactive, makePageActive, validateForm, syncCheckinCheckoutTimes } from './form.js';
 
 const cardData = getCardData();
 renderOfferCard(cardData);
@@ -7,3 +7,4 @@ renderOfferCard(cardData);
 makePageInactive();
 makePageActive();
 validateForm();
+syncCheckinCheckoutTimes();
