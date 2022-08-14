@@ -8,8 +8,6 @@ const ACCOMMODATION_TYPES = {
   'hotel': 'Отель',
 };
 
-const mapCanvasElement = document.querySelector('.map__canvas');
-
 const popupCardTemplate = document.querySelector('#card').content;
 const cardPhotoTemplate = document.querySelector('#card-photo-template').content;
 
@@ -43,7 +41,7 @@ const renderPhotos = (photos) => {
 
 const renderOfferCard = (cardData) => {
 
-  const offerFragment = document.createDocumentFragment();
+  const offerElement = document.createElement('div');
 
   const popupCardElement = popupCardTemplate.cloneNode(true);
   const popupAvatarElement = popupCardElement.querySelector('.popup__avatar');
@@ -68,9 +66,9 @@ const renderOfferCard = (cardData) => {
   popupDescriptionElement.textContent = cardData.offer.description;
   popupPhotosElement.appendChild(renderPhotos(cardData.offer.photos));
 
-  offerFragment.appendChild(popupCardElement);
+  offerElement.appendChild(popupCardElement);
 
-  mapCanvasElement.appendChild(offerFragment);
+  return offerElement;
 };
 
 export { getCardData, renderOfferCard };
