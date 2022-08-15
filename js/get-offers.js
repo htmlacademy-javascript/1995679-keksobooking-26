@@ -57,15 +57,18 @@ const renderOfferCard = (cardData) => {
 
   popupAvatarElement.src = cardData.author.avatar;
   popupTitleElement.textContent = cardData.offer.title;
-  popupAddressElement.textContent = `${cardData.offer.address.lat},${cardData.offer.address.lng}`;
+  popupAddressElement.textContent = `${cardData.location.lat},${cardData.location.lng}`;
   popupPriceElement.textContent = `${cardData.offer.price} ₽/ночь`;
   popupTypeElement.textContent = ACCOMMODATION_TYPES[cardData.offer.type];
   popupCapacityElement.textContent = `${cardData.offer.rooms} комнаты для ${cardData.offer.guests} гостей`;
   popupTimeElement.textContent = `Заезд после ${cardData.offer.checkin}, выезд до ${cardData.offer.checkout}`;
-  popupFeaturesElement.appendChild(renderFeatures(cardData.offer.features));
+  if (cardData.offer.features) {
+    popupFeaturesElement.appendChild(renderFeatures(cardData.offer.features));
+  };
   popupDescriptionElement.textContent = cardData.offer.description;
-  popupPhotosElement.appendChild(renderPhotos(cardData.offer.photos));
-
+  if (cardData.offer.photos) {
+    popupPhotosElement.appendChild(renderPhotos(cardData.offer.photos));
+  }
   offerElement.appendChild(popupCardElement);
 
   return offerElement;

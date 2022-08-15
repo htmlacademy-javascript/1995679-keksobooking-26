@@ -1,3 +1,5 @@
+import { sendData } from './api.js';
+
 const PRISTINE_CONFIG = {
   classTo: 'ad-form__element',
   errorClass: 'has-error',
@@ -39,7 +41,7 @@ const timeOutElement = adFormElement.querySelector('#timeout');
 
 priceElement.min = '1000';
 
-const priceSlider = (minValue, maxValue, step, connectType) => {
+const createPriceSlider = (minValue, maxValue, step, connectType) => {
   noUiSlider.create(sliderElement, {
     range: {
       min: minValue,
@@ -55,7 +57,7 @@ const priceSlider = (minValue, maxValue, step, connectType) => {
   });
 };
 
-priceSlider(+priceElement.min, +priceElement.max, DEFAULT_SLIDER_STEP, 'lower');
+createPriceSlider(+priceElement.min, +priceElement.max, DEFAULT_SLIDER_STEP, 'lower');
 
 sliderElement.noUiSlider.on('update', () => {
   priceElement.value = sliderElement.noUiSlider.get();

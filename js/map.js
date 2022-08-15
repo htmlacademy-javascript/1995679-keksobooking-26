@@ -1,109 +1,84 @@
-import { getCardData, renderOfferCard } from './get-offers.js';
 import { makePageActive } from './form.js';
 
-const INITIAL_MAP_POSITION = {
-  lat: 35.66560,
-  lng: 139.79112,
-  scale: 10,
-};
-
-const INITIAL_MARKER_POSITION = {
-  lat: 35.66560,
-  lng: 139.79112
-};
-
 const ADDRESS_PRECISION = 5;
-
-const resetButton = document.querySelector('.ad-form__reset');
 const addressElement = document.querySelector('#address');
+const fillInAddressValue = (address) => {
+  addressElement.value = `lat: ${address.lat.toFixed(ADDRESS_PRECISION)}, lng: ${address.lng.toFixed(ADDRESS_PRECISION)}`;
+};
 
-const createMap = () => {
+const createInteractiveMap = (coordinates) => {
   const map = L.map('map-canvas')
-    .on('load', () => {
-      makePageActive();
-    })
-    .setView({
-      lat: INITIAL_MAP_POSITION.lat,
-      lng: INITIAL_MAP_POSITION.lng,
-    }, INITIAL_MAP_POSITION.scale);
+  .on('load', () => {
+    makePageActive();
+  })
+  .setView({
+    lat: coordinates.lat,
+    lng: coordinates.lng,
+  }, coordinates.scale);
 
-  L.tileLayer(
-    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    },
-  ).addTo(map);
+L.tileLayer(
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  },
+).addTo(map);
 
-  const mainPinIcon = L.icon({
-    iconUrl: './img/main-pin.svg',
-    iconSize: [52, 52],
-    iconAnchor: [26, 52],
+return map
+};
+
+const createPinIcon = (pinIconData) => {
+  const pinIcon = L.icon({
+    iconUrl: pinIconData.iconUrl,
+    iconSize: [pinIconData.iconWidth, pinIconData.iconHeight],
+    iconAnchor: [pinIconData.iconWidth/2, pinIconData.iconHeight]
   });
 
-  const extraPinIcon = L.icon({
-    iconUrl: './img/pin.svg',
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-  });
+  return pinIcon
+};
 
-  const mainPinMarker = L.marker(
+const createPinMarker = (icon, position, isDraggable) => {
+  const pinMarker = L.marker(
     {
-      lat: INITIAL_MARKER_POSITION.lat,
-      lng: INITIAL_MARKER_POSITION.lng,
+      lat: position.lat,
+      lng: position.lng,
     },
     {
-      draggable: true,
-      icon: mainPinIcon,
+      draggable: isDraggable,
+      icon: icon
     }
   );
 
-  const fillInAddressValue = (address) => {
-    addressElement.value = `lat: ${address.lat.toFixed(ADDRESS_PRECISION)}, lng: ${address.lng.toFixed(ADDRESS_PRECISION)}`;
-  };
+  return pinMarker;
+};
 
-  mainPinMarker.addTo(map);
-  fillInAddressValue(mainPinMarker.getLatLng());
+const addMainMarkerToMap = (marker, map) => {
+  marker.addTo(map);
+  fillInAddressValue(marker.getLatLng());
 
-  mainPinMarker.on('moveend', (evt) => {
+  marker.on('moveend', (evt) => {
     const coordinates = evt.target.getLatLng();
     fillInAddressValue(coordinates);
   });
-
-  const resetMainMarkerPosition = () => {
-    mainPinMarker.setLatLng({
-      lat: INITIAL_MARKER_POSITION.lat,
-      lng: INITIAL_MARKER_POSITION.lng,
-    });
-  };
-
-  const resetMapPotision = () => {
-    map.setView({
-      lat: INITIAL_MAP_POSITION.lat,
-      lng: INITIAL_MAP_POSITION.lng,
-    }, INITIAL_MAP_POSITION.scale);
-  };
-
-  resetButton.addEventListener('click', resetMainMarkerPosition);
-  resetButton.addEventListener('click', resetMapPotision);
-
-  const markerGroup = L.layerGroup().addTo(map);
-
-  const createCustomMarker = (data) => {
-    const marker = L.marker(
-      {
-        lat: data.offer.address.lat,
-        lng: data.offer.address.lng,
-      },
-      {
-        icon: extraPinIcon,
-      });
-
-    marker.addTo(markerGroup).bindPopup(renderOfferCard(data));
-  };
-
-  for (let i = 0; i <10; i++) {
-    createCustomMarker(getCardData());
-  }
 };
 
-export { createMap };
+const addMarkerResetPositionHandler = (button, marker, position) => {
+  const resetMarkerPosition = () => {
+    marker.setLatLng({
+      lat: position.lat,
+      lng: position.lng,
+    });
+  }
+  button.addEventListener('click', resetMarkerPosition);
+};
+
+const addMapResetPositionHandler = (button, map, position) => {
+  const resetMapPosition = () => {
+    map.setView({
+      lat: position.lat,
+      lng: position.lng,
+    }, position.scale)
+  }
+  button.addEventListener('click', resetMapPosition);
+};
+
+export { createInteractiveMap, createPinIcon, createPinMarker, addMainMarkerToMap, addMarkerResetPositionHandler, addMapResetPositionHandler};
