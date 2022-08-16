@@ -1,9 +1,8 @@
-import { getCardData, renderOfferCard } from './get-offers.js';
-import { makePageInactive, makePageActive, validateForm } from './form.js';
-
-const cardData = getCardData();
-renderOfferCard(cardData);
+import { makePageInactive, validateForm, syncCheckinCheckoutTimes } from './form.js';
+import { createMap } from './map.js';
 
 makePageInactive();
-makePageActive();
 validateForm();
+syncCheckinCheckoutTimes();
+
+createMap();
