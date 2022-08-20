@@ -1,5 +1,7 @@
 import { sendData } from './api.js';
-import { addMarkerResetPositionHandler } from './map.js';
+import { resetMainMarkerPosition } from './map.js';
+import { showSuccessMessage } from './success.js';
+import { showErrorMessage } from './error.js';
 
 const PRISTINE_CONFIG = {
   classTo: 'ad-form__element',
@@ -51,8 +53,15 @@ const enableSubmitButton = () => {
   submitButton.disabled = false;
 };
 
+const closeLeafletPopup = () => {
+  const popupCloseButton = document.querySelector('.leaflet-popup-close-button');
+  if (popupCloseButton) {popupCloseButton.click();}
+};
+
 const resetFormData = () => {
   adForm.reset();
+  resetMainMarkerPosition();
+  closeLeafletPopup();
   // check if filters are re-set as well
 };
 
@@ -133,8 +142,8 @@ const validateForm = () => {
     if (formIsValid) {
       disableSubmitButton();
       sendData(
-        () => {console.log('success'); enableSubmitButton(); resetFormData();},
-        () => {console.log('fail'); enableSubmitButton()},
+        () => {enableSubmitButton(); resetFormData(); showSuccessMessage();},
+        () => {enableSubmitButton(); showErrorMessage();},
         formData
       );
     }
@@ -167,4 +176,4 @@ const makePageActive = () => {
   });
 };
 
-export { makePageInactive, makePageActive, validateForm, syncCheckinCheckoutTimes };
+export { makePageInactive, makePageActive, validateForm, syncCheckinCheckoutTimes, resetFormData };

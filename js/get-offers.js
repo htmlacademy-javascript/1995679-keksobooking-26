@@ -64,7 +64,7 @@ const renderOfferCard = (cardData) => {
   popupTimeElement.textContent = `Заезд после ${cardData.offer.checkin}, выезд до ${cardData.offer.checkout}`;
   if (cardData.offer.features) {
     popupFeaturesElement.appendChild(renderFeatures(cardData.offer.features));
-  };
+  }
   popupDescriptionElement.textContent = cardData.offer.description;
   if (cardData.offer.photos) {
     popupPhotosElement.appendChild(renderPhotos(cardData.offer.photos));
