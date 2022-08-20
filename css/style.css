@@ -1046,3 +1046,8 @@ fieldset {
   color: red;
   margin-top: 2px;
 }
+
+button:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}

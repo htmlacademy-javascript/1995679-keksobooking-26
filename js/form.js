@@ -1,4 +1,5 @@
 import { sendData } from './api.js';
+import { addMarkerResetPositionHandler } from './map.js';
 
 const PRISTINE_CONFIG = {
   classTo: 'ad-form__element',
@@ -26,20 +27,34 @@ const ALLOWED_CAPACITIES_PER_ROOM_NUMBER = {
 
 const DEFAULT_SLIDER_STEP = 1;
 
-const adFormElement = document.querySelector('.ad-form');
-const adFormFieldsetElements = adFormElement.querySelectorAll('fieldset');
+const adForm = document.querySelector('.ad-form');
+const adFormFieldsetElements = adForm.querySelectorAll('fieldset');
 const mapFiltersFormElement = document.querySelector('.map__filters');
 const mapFeaturesElement = mapFiltersFormElement.querySelector('.map__features');
 const mapFiltersFormSelectElements = mapFiltersFormElement.querySelectorAll('select');
-const roomNumberFormElement = adFormElement.querySelector('#room_number');
-const capacityElement = adFormElement.querySelector('#capacity');
-const accommodationTypeElement = adFormElement.querySelector('#type');
-const priceElement = adFormElement.querySelector('#price');
-const sliderElement = adFormElement.querySelector('.ad-form__slider');
-const timeInElement = adFormElement.querySelector('#timein');
-const timeOutElement = adFormElement.querySelector('#timeout');
+const roomNumberFormElement = adForm.querySelector('#room_number');
+const capacityElement = adForm.querySelector('#capacity');
+const accommodationTypeElement = adForm.querySelector('#type');
+const priceElement = adForm.querySelector('#price');
+const sliderElement = adForm.querySelector('.ad-form__slider');
+const timeInElement = adForm.querySelector('#timein');
+const timeOutElement = adForm.querySelector('#timeout');
+const submitButton = adForm.querySelector('.ad-form__submit');
 
 priceElement.min = '1000';
+
+const disableSubmitButton = () => {
+  submitButton.disabled = true;
+};
+
+const enableSubmitButton = () => {
+  submitButton.disabled = false;
+};
+
+const resetFormData = () => {
+  adForm.reset();
+  // check if filters are re-set as well
+};
 
 const createPriceSlider = (minValue, maxValue, step, connectType) => {
   noUiSlider.create(sliderElement, {
@@ -87,7 +102,7 @@ const syncCheckinCheckoutTimes = () => {
 };
 
 const validateForm = () => {
-  const pristine = new Pristine(adFormElement, PRISTINE_CONFIG, true);
+  const pristine = new Pristine(adForm, PRISTINE_CONFIG, true);
 
   pristine.addValidator(roomNumberFormElement, (value) => ALLOWED_CAPACITIES_PER_ROOM_NUMBER[value].includes(capacityElement.value),
     'Такое количество комнат не подойдет', 1, true);
@@ -111,17 +126,23 @@ const validateForm = () => {
     return false;
   }, 'Такая цена не подойдет', 2, true);
 
-  adFormElement.addEventListener('submit', (evt) => {
+  adForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
+    const formData = new FormData(evt.target);
     const formIsValid = pristine.validate();
     if (formIsValid) {
-      adFormElement.submit();
+      disableSubmitButton();
+      sendData(
+        () => {console.log('success'); enableSubmitButton(); resetFormData();},
+        () => {console.log('fail'); enableSubmitButton()},
+        formData
+      );
     }
   });
 };
 
 const makePageInactive = () => {
-  adFormElement.classList.add('ad-form--disabled');
+  adForm.classList.add('ad-form--disabled');
   adFormFieldsetElements.forEach((element) => {
     element.disabled = true;
   });
@@ -134,7 +155,7 @@ const makePageInactive = () => {
 };
 
 const makePageActive = () => {
-  adFormElement.classList.remove('ad-form--disabled');
+  adForm.classList.remove('ad-form--disabled');
   adFormFieldsetElements.forEach((element) => {
     element.disabled = false;
   });

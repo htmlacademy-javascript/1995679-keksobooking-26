@@ -1,5 +1,5 @@
 import { makePageInactive, validateForm, syncCheckinCheckoutTimes } from './form.js';
-import { createInteractiveMap, createPinIcon, createPinMarker, addMainMarkerToMap, addMarkerResetPositionHandler, addMapResetPositionHandler } from './map.js';
+import { createInteractiveMap, createPinIcon, createPinMarker, addMainMarkerToMap, addMarkerResetPositionHandler, addMapResetPositionHandler, setMarkerPosition, setMapPosition } from './map.js';
 import { renderOfferCard } from './get-offers.js';
 import { getData } from './api.js';
 import { showAlert } from './alert.js';
@@ -27,6 +27,7 @@ const EXTRA_PIN_ICON_DATA = {
   iconHeight: 40
 };
 
+const adForm = document.querySelector('.ad-form');
 const resetButton = document.querySelector('.ad-form__reset');
 
 makePageInactive();
