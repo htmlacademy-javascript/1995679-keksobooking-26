@@ -1,34 +1,45 @@
 import { makePageInactive, validateForm, syncCheckinCheckoutTimes, resetFormData } from './form.js';
-import { createInteractiveMap, createPinIcon, createPinMarker } from './map.js';
-import { renderOfferCard } from './get-offers.js';
+import { createInteractiveMap, addMarkersToMap } from './map.js';
 import { getData } from './api.js';
 import { showAlert } from './alert.js';
+import { filterOffers, makeFiltersElementActive, makeFiltersElementInactive, filterOffersHandler } from './filter-offers.js';
+import { uploadPhotoHandler } from './upload-photos.js';
 
-const EXTRA_PIN_ICON_DATA = {
-  iconUrl: './img/pin.svg',
-  iconWidth: 40,
-  iconHeight: 40
+const DEFAULT_FILTER_SETTINGS = {
+  type: 'any',
+  price: 'any',
+  rooms: 'any',
+  guests: 'any',
+  features: new Set(),
 };
 
 makePageInactive();
+makeFiltersElementInactive();
 validateForm();
 syncCheckinCheckoutTimes();
 
+const resetButton = document.querySelector('.ad-form__reset');
+const uploadAvatarElement = document.querySelector('#avatar');
+const previewAvatarElement = document.querySelector('#avatar-preview');
+const uploadAccommodationPhotoElement = document.querySelector('#images');
+const previewAccommodationPhotoElement = document.querySelector('#accommodation-preview');
 const map = createInteractiveMap();
-const extraPinIcon = createPinIcon(EXTRA_PIN_ICON_DATA);
 const markerGroup = L.layerGroup().addTo(map);
+
+uploadPhotoHandler(uploadAvatarElement, previewAvatarElement);
+uploadPhotoHandler(uploadAccommodationPhotoElement, previewAccommodationPhotoElement);
 
 getData(
   (data) => {
-    data.forEach((element) => {
-      const customMarker = createPinMarker(extraPinIcon, element.location, false);
-      customMarker.addTo(markerGroup).bindPopup(renderOfferCard(element));
-    });
+    makeFiltersElementActive();
+    const filteredOffers = filterOffers(data, DEFAULT_FILTER_SETTINGS);
+    addMarkersToMap(filteredOffers, markerGroup);
+    filterOffersHandler(markerGroup, data, addMarkersToMap);
   },
   (error) => {showAlert(`${error} - Не удается подгрузить данные. попробуйте еще`);}
 );
 
-const resetButton = document.querySelector('.ad-form__reset');
+
 resetButton.addEventListener('click', (evt) => {
   evt.preventDefault();
   resetFormData();

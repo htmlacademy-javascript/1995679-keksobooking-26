@@ -1,9 +1,18 @@
 import { makePageActive } from './form.js';
+import { renderOfferCard } from './get-offers.js';
+
+const MAP_ELEMENT_ID = 'map-canvas';
 
 const MAIN_PIN_ICON_DATA = {
   iconUrl: './img/main-pin.svg',
   iconWidth: 52,
   iconHeight: 52
+};
+
+const EXTRA_PIN_ICON_DATA = {
+  iconUrl: './img/pin.svg',
+  iconWidth: 40,
+  iconHeight: 40
 };
 
 const INITIAL_MAP_POSITION = {
@@ -49,6 +58,7 @@ const createPinMarker = (icon, position, isDraggable) => {
 };
 
 const mainPinIcon = createPinIcon(MAIN_PIN_ICON_DATA);
+const extraPinIcon = createPinIcon(EXTRA_PIN_ICON_DATA);
 const mainPinMarker = createPinMarker(mainPinIcon, INITIAL_MAIN_MARKER_POSITION, true);
 
 const resetMainMarkerPosition = () => {
@@ -60,10 +70,8 @@ const resetMainMarkerPosition = () => {
 };
 
 const createInteractiveMap = () => {
-  const map = L.map('map-canvas')
-    .on('load', () => {
-      makePageActive();
-    })
+  const map = L.map(MAP_ELEMENT_ID)
+    .on('load', makePageActive)
     .setView({
       lat: INITIAL_MAP_POSITION.lat,
       lng: INITIAL_MAP_POSITION.lng,
@@ -87,4 +95,11 @@ const createInteractiveMap = () => {
   return map;
 };
 
-export { createInteractiveMap, createPinIcon, createPinMarker, resetMainMarkerPosition };
+const addMarkersToMap = (elements, markerGroup) => {
+  elements.forEach((element) => {
+    const customMarker = createPinMarker(extraPinIcon, element.location, false);
+    customMarker.addTo(markerGroup).bindPopup(renderOfferCard(element));
+  });
+};
+
+export { createInteractiveMap, createPinIcon, createPinMarker, resetMainMarkerPosition, addMarkersToMap };

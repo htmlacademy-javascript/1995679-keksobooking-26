@@ -1,5 +1,3 @@
-import { generateItem } from './data.js';
-
 const ACCOMMODATION_TYPES = {
   'flat': 'Квартира',
   'bungalow': 'Бунгало',
@@ -10,8 +8,6 @@ const ACCOMMODATION_TYPES = {
 
 const popupCardTemplate = document.querySelector('#card').content;
 const cardPhotoTemplate = document.querySelector('#card-photo-template').content;
-
-const getCardData = () => generateItem(4);
 
 const renderFeatures = (features) => {
   const featuresFragment = document.createDocumentFragment();
@@ -74,5 +70,5 @@ const renderOfferCard = (cardData) => {
   return offerElement;
 };
 
-export { getCardData, renderOfferCard };
+export { renderOfferCard };
 
