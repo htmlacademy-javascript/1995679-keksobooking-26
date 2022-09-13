@@ -23,5 +23,9 @@
   "engines": {
     "node": "16.x",
     "npm": "8.x"
+  },
+  "dependencies": {
+    "nouislider": "^15.6.1",
+    "pristinejs": "^0.1.9"
   }
 }

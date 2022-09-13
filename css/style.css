@@ -407,6 +407,10 @@ fieldset {
   margin-right: 14px;
 }
 
+.ad-form__slider {
+  margin-top: 7px;
+}
+
 .ad-form__slider.noUi-target:not(#fake-id) {
   width: calc(100% - 20px);
   height: 5px;
@@ -1034,4 +1038,16 @@ fieldset {
 
 .hidden {
   display: none;
+}
+
+/* Pristine classes */
+
+.pristine-error-text {
+  color: red;
+  margin-top: 2px;
+}
+
+button:disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }
