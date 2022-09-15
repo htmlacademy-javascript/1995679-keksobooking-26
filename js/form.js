@@ -1,3 +1,9 @@
+import { sendData } from './api.js';
+import { resetMainMarkerPosition } from './map.js';
+import { showSuccessMessage } from './success.js';
+import { showErrorMessage } from './error.js';
+import { resetFilters } from './filter-offers.js';
+
 const PRISTINE_CONFIG = {
   classTo: 'ad-form__element',
   errorClass: 'has-error',
@@ -15,6 +21,8 @@ const MIN_ACCOMMODATION_PRICES = {
   'palace': 10000
 };
 
+const INITIAL_PRICE_AMOUNT = '1000';
+
 const ALLOWED_CAPACITIES_PER_ROOM_NUMBER = {
   '1': ['1'],
   '2': ['1', '2'],
@@ -24,22 +32,40 @@ const ALLOWED_CAPACITIES_PER_ROOM_NUMBER = {
 
 const DEFAULT_SLIDER_STEP = 1;
 
-const adFormElement = document.querySelector('.ad-form');
-const adFormFieldsetElements = adFormElement.querySelectorAll('fieldset');
-const mapFiltersFormElement = document.querySelector('.map__filters');
-const mapFeaturesElement = mapFiltersFormElement.querySelector('.map__features');
-const mapFiltersFormSelectElements = mapFiltersFormElement.querySelectorAll('select');
-const roomNumberFormElement = adFormElement.querySelector('#room_number');
-const capacityElement = adFormElement.querySelector('#capacity');
-const accommodationTypeElement = adFormElement.querySelector('#type');
-const priceElement = adFormElement.querySelector('#price');
-const sliderElement = adFormElement.querySelector('.ad-form__slider');
-const timeInElement = adFormElement.querySelector('#timein');
-const timeOutElement = adFormElement.querySelector('#timeout');
+const adForm = document.querySelector('.ad-form');
+const adFormFieldsetElements = adForm.querySelectorAll('fieldset');
+const roomNumberFormElement = adForm.querySelector('#room_number');
+const capacityElement = adForm.querySelector('#capacity');
+const accommodationTypeElement = adForm.querySelector('#type');
+const priceElement = adForm.querySelector('#price');
+const sliderElement = adForm.querySelector('.ad-form__slider');
+const timeInElement = adForm.querySelector('#timein');
+const timeOutElement = adForm.querySelector('#timeout');
+const submitButton = adForm.querySelector('.ad-form__submit');
 
-priceElement.min = '1000';
+priceElement.min = INITIAL_PRICE_AMOUNT;
 
-const priceSlider = (minValue, maxValue, step, connectType) => {
+const disableSubmitButton = () => {
+  submitButton.disabled = true;
+};
+
+const enableSubmitButton = () => {
+  submitButton.disabled = false;
+};
+
+const closeLeafletPopup = () => {
+  const popupCloseButton = document.querySelector('.leaflet-popup-close-button');
+  if (popupCloseButton) {popupCloseButton.click();}
+};
+
+const resetFormData = () => {
+  adForm.reset();
+  resetMainMarkerPosition();
+  closeLeafletPopup();
+  resetFilters();
+};
+
+const createPriceSlider = (minValue, maxValue, step, connectType) => {
   noUiSlider.create(sliderElement, {
     range: {
       min: minValue,
@@ -55,7 +81,7 @@ const priceSlider = (minValue, maxValue, step, connectType) => {
   });
 };
 
-priceSlider(+priceElement.min, +priceElement.max, DEFAULT_SLIDER_STEP, 'lower');
+createPriceSlider(Number(priceElement.min), Number(priceElement.max), DEFAULT_SLIDER_STEP, 'lower');
 
 sliderElement.noUiSlider.on('update', () => {
   priceElement.value = sliderElement.noUiSlider.get();
@@ -69,7 +95,7 @@ accommodationTypeElement.addEventListener('change', () => {
   sliderElement.noUiSlider.updateOptions({
     range: {
       min: MIN_ACCOMMODATION_PRICES[accommodationTypeElement.value],
-      max: +priceElement.max,
+      max: Number(priceElement.max),
     }
   });
 });
@@ -85,7 +111,7 @@ const syncCheckinCheckoutTimes = () => {
 };
 
 const validateForm = () => {
-  const pristine = new Pristine(adFormElement, PRISTINE_CONFIG, true);
+  const pristine = new Pristine(adForm, PRISTINE_CONFIG, true);
 
   pristine.addValidator(roomNumberFormElement, (value) => ALLOWED_CAPACITIES_PER_ROOM_NUMBER[value].includes(capacityElement.value),
     'Такое количество комнат не подойдет', 1, true);
@@ -109,39 +135,33 @@ const validateForm = () => {
     return false;
   }, 'Такая цена не подойдет', 2, true);
 
-  adFormElement.addEventListener('submit', (evt) => {
+  adForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
+    const formData = new FormData(evt.target);
     const formIsValid = pristine.validate();
     if (formIsValid) {
-      adFormElement.submit();
+      disableSubmitButton();
+      sendData(
+        () => {enableSubmitButton(); resetFormData(); showSuccessMessage();},
+        () => {enableSubmitButton(); showErrorMessage();},
+        formData
+      );
     }
   });
 };
 
 const makePageInactive = () => {
-  adFormElement.classList.add('ad-form--disabled');
+  adForm.classList.add('ad-form--disabled');
   adFormFieldsetElements.forEach((element) => {
-    element.disabled = true;
-  });
-
-  mapFiltersFormElement.classList.add('map__filters--disabled');
-  mapFeaturesElement.disabled = true;
-  mapFiltersFormSelectElements.forEach((element) => {
     element.disabled = true;
   });
 };
 
 const makePageActive = () => {
-  adFormElement.classList.remove('ad-form--disabled');
+  adForm.classList.remove('ad-form--disabled');
   adFormFieldsetElements.forEach((element) => {
-    element.disabled = false;
-  });
-
-  mapFiltersFormElement.classList.remove('map__filters--disabled');
-  mapFeaturesElement.disabled = false;
-  mapFiltersFormSelectElements.forEach((element) => {
     element.disabled = false;
   });
 };
 
-export { makePageInactive, makePageActive, validateForm, syncCheckinCheckoutTimes };
+export { makePageInactive, makePageActive, validateForm, syncCheckinCheckoutTimes, resetFormData };

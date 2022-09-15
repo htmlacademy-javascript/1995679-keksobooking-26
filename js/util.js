@@ -49,6 +49,13 @@ const getRandomAmountOfArrayElements = (elements) => {
   return shuffle(elements).slice(0,randomAmountOfElements);
 };
 
+const allElementsArePresentInAnotherArray = (elements, elemetsToCompare) => {
+  if (!elemetsToCompare) {elemetsToCompare = [];}
+  return elements.every((element) => elemetsToCompare.includes(element));
+};
+
+const isNumberWithingRange = (number, min, max) => (min <= number && number <= max);
+
 // Функция взята из интернета и доработана
 // Источник - https://www.freecodecamp.org/news/javascript-debounce-example
 
@@ -62,4 +69,4 @@ function debounce (callback, timeoutDelay = 500) {
   };
 }
 
-export { checkStringLength, getRandomArrayElement, shuffle, debounce, getRandomPositiveInteger, getRandomPositiveFloat, getRandomAmountOfArrayElements, addZeroToOneDigitNumbers };
+export { checkStringLength, getRandomArrayElement, shuffle, debounce, getRandomPositiveInteger, getRandomPositiveFloat, getRandomAmountOfArrayElements, addZeroToOneDigitNumbers, allElementsArePresentInAnotherArray, isNumberWithingRange };
