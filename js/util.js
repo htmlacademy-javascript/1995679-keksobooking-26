@@ -49,7 +49,7 @@ const getRandomAmountOfArrayElements = (elements) => {
   return shuffle(elements).slice(0,randomAmountOfElements);
 };
 
-const allElementsArePresentInAnotherArray = (elements, elemetsToCompare) => {
+const checkIfAllElementsArePresentInAnotherArray = (elements, elemetsToCompare) => {
   if (!elemetsToCompare) {elemetsToCompare = [];}
   return elements.every((element) => elemetsToCompare.includes(element));
 };
@@ -69,4 +69,4 @@ function debounce (callback, timeoutDelay = 500) {
   };
 }
 
-export { checkStringLength, getRandomArrayElement, shuffle, debounce, getRandomPositiveInteger, getRandomPositiveFloat, getRandomAmountOfArrayElements, addZeroToOneDigitNumbers, allElementsArePresentInAnotherArray, isNumberWithingRange };
+export { checkStringLength, getRandomArrayElement, shuffle, debounce, getRandomPositiveInteger, getRandomPositiveFloat, getRandomAmountOfArrayElements, addZeroToOneDigitNumbers, checkIfAllElementsArePresentInAnotherArray, isNumberWithingRange };

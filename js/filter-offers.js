@@ -1,4 +1,4 @@
-import { allElementsArePresentInAnotherArray, isNumberWithingRange, debounce } from './util.js';
+import { checkIfAllElementsArePresentInAnotherArray, isNumberWithingRange, debounce } from './util.js';
 
 const MAX_AMOUNT_OF_OFFERS = 10;
 
@@ -62,7 +62,7 @@ const filterByAmountOfGuests = (offers, guests) => {
   }
 };
 
-const filterByFeatures = (features, offers) => offers.filter((offer) => allElementsArePresentInAnotherArray(Array.from(features), offer.offer.features));
+const filterByFeatures = (features, offers) => offers.filter((offer) => checkIfAllElementsArePresentInAnotherArray(Array.from(features), offer.offer.features));
 
 const filterOffers = (offers, settings) => {
   let result = filterByType(offers, settings.type);
